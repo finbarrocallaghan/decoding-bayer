@@ -1,17 +1,56 @@
-replicating out.3.log on a ContourNext, but on second attempt.. have to plug out and back in again to get something sensible..
+On a ContourNext, trying to replicate:
 
-on first attempt I can get all the readings from the device, but it ends up getting stuck, and then 
+![example dialogue](dialogue.png)
 
-    <<< 'ABC;\x024R|10|^^^Glucose|5.2|mmol/L^P||F/M0/T1||201302080218\r\x174B\r\n\x00'
-    *** '\x024R|10|^^^Glucose|5.2|mmol/L^P||F/M0/T1||201302080218\r\x174B\r\n'
+
+    >>> '\x04'
+    1H|\^&||mLJsN1|Bayer7410^01.10\01.05\10.03^7425-3013732^00000|A=1^C=22^G=en,en\de\fr\it\nl\es\pt\sl\hr\da\no\fi\sv\el^I=0200^R=0^S=01^U=311^V=20600^X=054070070E60180130180360070130^Y=360126099054120054252099^Z=1|490|||||P|1|20131205221705
+    
     >>> '\x06'
-    <<< 'ABC<\x025R|11|^^^Glucose|10.9|mmol/L^P||F/M0/T1||201302081017\r\x177E\r\n'
+    no STX
+    >>> '\x15'
+    1H|\^&||FMmMiI|Bayer7410^01.10\01.05\10.03^7425-3013732^00000|A=1^C=22^G=en,en\de\fr\it\nl\es\pt\sl\hr\da\no\fi\sv\el^I=0200^R=0^S=01^U=311^V=20600^X=054070070F00180130180360070130^Y=360126099054120054252099^Z=1|490|||||P|1|20131205221705
+    
+    >>> '\x06'
+    53|1
+    
+    >>> '\x06'
+    9C|1|^^^Glucose|4.6|mmol/L^P||M0/T1||201302050040
+    
+    >>> '\x06'
+    1C|2|^^^Glucose|7.1|mmol/L^P||F/M0/T1||201302050733
+    
+    >>> '\x06'
+    18|3|^^^Glucose|8.2|mmol/L^P||F/M0/T1||201302051054
+    
+    >>> '\x06'
+    54|4|^^^Glucose|7.9|mmol/L^P||A/M0/T1||201302060057
+    
+    >>> '\x06'
+    53|5|^^^Glucose|10.5|mmol/L^P||F/M0/T1||201302060807
+    
+    >>> '\x06'
+    26|6|^^^Glucose|4.9|mmol/L^P||B/M0/T1||201302061956
+    
+    >>> '\x06'
+    4B|7|^^^Glucose|5.2|mmol/L^P||A/M0/T1||201302070049
+    
+    >>> '\x06'
+    55|8|^^^Glucose|12.9|mmol/L^P||F/M0/T1||201302070723
+    
+    >>> '\x06'
+    58|9|^^^Glucose|7.5|mmol/L^P||B/M0/T1||201302072148
+    
+    >>> '\x06'
+    4B|10|^^^Glucose|5.8|mmol/L^P||F/M0/T1||201302080218
+    
+    >>> '\x06'
     Traceback (most recent call last):
-      File "main.py", line 28, in <module>
-        for rec in bc.sync():
-      File "/home/finn/diab_/glucodump/glucodump/contourusb.py", line 92, in sync
+      File "main.py", line 185, in <module>
+        for rec in enumerate(bc.sync()):
+      File "main.py", line 126, in sync
         data = self.dev.read()
-      File "/home/finn/diab_/glucodump/glucodump/usbcomm.py", line 83, in read
+      File "main.py", line 35, in read
         data = self.epin.read(self.blocksize)
       File "/usr/local/lib/python2.7/dist-packages/usb/core.py", line 300, in read
         return self.device.read(self.bEndpointAddress, size, self.interface, timeout)
@@ -26,10 +65,12 @@ on first attempt I can get all the readings from the device, but it ends up gett
     usb.core.USBError: [Errno 110] Operation timed out
 
 
-
-| ASCII         | Hex           
+| ASCII         | Hex
 | ------------- |:-------------:
-| ACK           | x06
+| ACK           | \x06
+| NAK           | \x15
+| EOT           | \x04
+| Enq           | \x05
 
 
-and after that, i'm not too sure.. :)
+no idea why it's failing after the 10th reading is sent through.. 
