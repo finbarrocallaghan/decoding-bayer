@@ -63,7 +63,7 @@ On a ContourNext, trying to replicate:
 | ACK           | \x06
 | NAK           | \x15
 | EOT           | \x04
-| Enq           | \x05
+| ENQ           | \x05
 
 
 no idea why it's failing after the 10th reading is sent through.. 
